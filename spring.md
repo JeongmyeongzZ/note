@@ -25,6 +25,27 @@ _Configuration meta data XML, Java 애노테이션, Java 코드로 작성할 수
 * 정적 팩토리 메소드를 사용한 초기화
 * 인스턴스 팩토리 메소드를 사용한 초기화 (서비스 로케이터 패턴)
 
+*Bean scope*
+* singleton -> (기본값) bean 정의를 하나의 객체 인스턴스로 생성하고, 모든 Spring IoC 컨테이너에 공유한다.
+* prototype -> 하나의 bean 정의를 여러 개의 객체 인스턴스로 생성. bean을 요청할 때마다 새로운 bean 인스턴스를 생성한다.
+* request -> bean의 스코프를 HTTP request의 생명주기에 맞춘다. request scope bean은 각각의 HTTP request가 있을 때마다 생성됩니다. 
+* session -> bean의 스코프를 HTTP Session의 생명주기에 맞춘다. 
+* application -> bean의 스코프를 ServletContext의 생명주기에 맞춥니다.
+* websocket -> bean의 스코프를 WebSocket의 생명주기에 맞춥니다.
+
+singleton, prototype 을 제외한 모든 스코프는 web-aware Spring ApplicationContext에서만 쓸 수 있습니다.
+
+
+_Servlet ?_
+
+> 자바를 사용하여 웹 페이지를 동적으로 생성하는 서버측 프로그램 혹은 그 사양
+> Servlet Container에 의해 관리, 실행된다
+> 개발자는 Servlet을 만들어 HTTP 요청을 받아 처리하는 부분을 구현한다 (`HttpServlet` class 를 통해 구현)
+> HttpServlet class 엔 doGet, doPost 등의 메서드가 있는데, 이 메서드들은 HttpServletRequest req, HttpServletResponse resp 를 인자로 갖는다.
+> 메서드를 참고하면 알 수 있듯 요청(Request)과 응답(Response) 즉, Http 웹 서버 기능을 맡는다.
+
+> Tomcat은 Servlet Container, Servlet Engine 이라고 표현할 수 있으며 개발자가 작성한 Servlet을 관리한다 (어떤 요청 `request` 냐의 따라 어떤 Servlet 을 실행시킬지를 결정)
+
 
 
 ### DI (Dependency Injection)
@@ -58,9 +79,6 @@ registerBean을 시행할 때 beanInitializeHistory를 통해 객체들이 이�
 4. 프로그램이 종료되기 전에 (Container 종료 전) destory 메서드가 존재한다면, 실행하고 정상적으로 종료한다. (@PreDestory)
 ```
 
-
-
-
 * Constructor 기반의 DI
 * Setter 기반의 DI
 * Field 기반의 DI (@Autowired, 바람직하지 않음)
@@ -74,13 +92,8 @@ registerBean을 시행할 때 beanInitializeHistory를 통해 객체들이 이�
 
 
 
-Dependency Resolution Process
-
-- configuration 메타데이터를 통해 생성되고 구성 된 ApplicationContext 
-
-
-
 ### 참고 링크 
 - _[이펙티브 자바](http://www.yes24.com/Product/Goods/65551284)_
 - _[종립님 블로그 #스프링 문서 번역](https://johngrib.github.io/wiki/spring/document/core/)_
 - _[스프링 공식 문서](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html)_
+
