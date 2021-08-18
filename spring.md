@@ -20,12 +20,12 @@ ApplicationContext 는 `IoC 엔진` `싱글톤 레지스트리`, IoC 방식을 �
 _Configuration meta data XML, Java 애노테이션, Java 코드로 작성할 수 있으며 이 것을 컨테이너가 읽고 인스턴스화 하고 설정하고, 조립한다. XML에 일일이 명시하는 방식도 있지만, @Bean과 같은 어노테이션 형태로 더 많이 이용 됨_
 
 
-*Instantiating Beans*
+####Instantiating Beans
 * 생성자를 사용한 초기화
 * 정적 팩토리 메소드를 사용한 초기화
 * 인스턴스 팩토리 메소드를 사용한 초기화 (서비스 로케이터 패턴)
 
-*Bean scope*
+####Bean scope
 * singleton -> (기본값) bean 정의를 하나의 객체 인스턴스로 생성하고, 모든 Spring IoC 컨테이너에 공유한다.
   *  싱글톤 인스턴스는 싱글톤 bean을 모아두는 캐시에 저장됩니다. (요청이 들어오면 캐싱된 bean을 리턴하는 방식)
   *  Spring의 싱글톤 bean의 개념은 GoF의 디자인 패턴 책에 나오는 싱글톤 패턴과는 다릅니다.
