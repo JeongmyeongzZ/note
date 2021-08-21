@@ -98,6 +98,28 @@ registerBean을 시행할 때 beanInitializeHistory를 통해 객체들이 이�
 
 
 
+### Annotation
+
+Spring은 @Component, @Service, @Controller와 같은 추가적인 스테레오 타입을 제공합니다. @Component 는 Spring이 관리하는 모든 컴포넌트에 대한 일반적인 스테레오 타입입니다.
+
+@Repository, @Service, @Controller는 좀 더 구체적인 유즈 케이스(각각 persistence, service, presentation 레이어)를 위한 전문화된 @Component입니다.
+
+@Repository는 persistence 레이어에서 자동 예외 번역을 위한 marker로도 지원을 받고 있습니다.
+
+_예외 번역?_
+
+> DAO에서 Hibernate 또는 JPA를 사용할 때 지속성 기술의 기본 예외 클래스를 처리하는 방법을 결정해야 합니다
+> DAO는 기술에 따라 HibernateException 또는 의 하위 클래스를 throw합니다 PersistenceException. 이러한 예외는 모두 런타임 예외이며 선언하거나 catch할 필요가 없습니다.
+> 이것은 호출자가 예외를 일반적으로 치명적인 것으로만 처리할 수 있음을 의미합니다. 호출자를 구현 전략에 묶지 않고 특정 원인(예: 낙관적 잠금 실패)을 포착하는 것은 불가능합니다.
+> Spring에서는 @Repository주석을 통해 투명하게 예외 번역을 적용할 수 있습니다 .
+> 포스트 프로세서는 자동으로 모든 예외 변환기( PersistenceExceptionTranslator인터페이스 구현)를 찾고 @Repository주석으로 표시된 모든 빈에 조언(advice) 하여 발견된 변환기가 던져진 예외에 적절한 번역을 가로채고 적용할 수 있도록 합니다.
+> 요약하면, Spring 관리 트랜잭션, 종속성 주입 및 Spring의 사용자 정의 예외 계층으로의 투명한 예외 변환(원하는 경우)의 이점을 계속 누리면서 일반 지속성 기술의 API 및 주석을 기반으로 DAO를 구현할 수 있습니다.
+
+
+Spring이 제공하는 애노테이션들 중 많은 수가 여러분의 코드에서 meta-annotation으로 사용될 수 있습니다. meta-annotation은 다른 애노테이션에 적용할 수 있는 애노테이션을 말합니다. 예를 들어 앞에서 이야기했던 @Service 애노테이션의 경우 @Component가 meta-annotation으로 붙어 있습니다. (@RestController는 @Controller와 @ResponseBody가 조합된 애노테이션)
+
+이를 `meta-annotation`을 조합한 `composed annotation` 이라고 한다. `composed annotation`은 커스터마이즈를 허용하기 위해 meta-annotation의 attribute를 재선언하는 옵션을 고려할 수 있습니다.
+
 
 ### 참고 링크 
 - _[이펙티브 자바](http://www.yes24.com/Product/Goods/65551284)_
