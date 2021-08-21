@@ -121,9 +121,37 @@ Spring이 제공하는 애노테이션들 중 많은 수가 여러분의 코드�
 이를 `meta-annotation`을 조합한 `composed annotation` 이라고 한다. `composed annotation`은 커스터마이즈를 허용하기 위해 meta-annotation의 attribute를 재선언하는 옵션을 고려할 수 있습니다.
 
 
+Spring의 새로운 Java configuration support의 핵심 아티팩트는 @Configuration 애노테이션을 붙인 클래스와 @Bean 애노테이션을 붙인 메소드입니다.
+
+#### Configuration / Bean
+* 빈 설정은 xml 방식과 java Config 방식이 있다.
+* xml 방식, java Config 방식 모두 빈을 명시해야하는 것은 똑같다. 이것을 xml 방식은 <bean>으로, java Config 방식은 @Bean으로 할 뿐이다.
+
+_bean_
+@Bean 애노테이션은 Spring IoC 컨테이너가 관리할 새로운 객체를 인스턴스화하고, configure하고, 초기화한다는 것을 나타내는 데 사용됩니다.
+@Bean 애노테이션을 붙인 메소드는 Spring @Component와 함께 사용할 수 있지만, 대체로 @Configuration bean과 사용하는 경우가 많습니다.
+
+_configuration_
+클래스에 @Configuration 애노테이션을 붙이는 것은 해당 클래스의 목적이 bean definition 소스라는 것을 나타내는 것입니다. 그리고 @Configuration 클래스는 같은 클래스 안에 있는 @Bean 메소드들끼리 서로를 호출하여 bean들 사이의 dependency를 정의할 수 있게 합니다.
+
+#### Component Scan / Component
+* Configuaration에서 componentScan을 사용하면 클래스를 보다 쉽게 빈으로 등록할 수 있다.
+* xml 방식에서는 <component-scan>, java config 방식에서는 @ComponentScan 어노테이션을 사용해두면, 알아서 @Component 클래스를 찾아 자동으로 빈으로 등록한다.
+
+_@Component를 파다보면 @Bean이 나오거나, @Bean으로도 Class를 등록할 수 있을까 ?_
+
+> @Component와 @Bean은 다르다. @Component를 스캔하여 Class를 Bean으로 등록함에도, @Bean과는 다르다.
+> @Component는 Class Level에서, @Bean은 Method Level에서 적용된다. @Component는 Class와 Bean이 One to One 관계를 갖는 반면 메소드는 그렇지 않다.
+> @Bean의 경우 개발자가 컨트롤이 불가능한 외부 라이브러리들을 Bean으로 등록하고 싶은 경우에 사용된다. (예를 들면 ObjectMapper의 경우 ObjectMapper Class에 @Component를 선언할수는 없으니 ObjectMapper의 인스턴스를 생성하는 메소드를 만들고 해당 메소드에 @Bean을 선언하여 Bean으로 등록한다.)
+
+
+
+
+
 ### 참고 링크 
 - _[이펙티브 자바](http://www.yes24.com/Product/Goods/65551284)_
 - _[종립님 블로그 #스프링 문서 번역](https://johngrib.github.io/wiki/spring/document/core/)_
 - _[스프링 공식 문서](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html)_
 - _[Servlet에 대한 개념](https://jeong-pro.tistory.com/222)_
+- _[Bean & Component](https://ecsimsw.tistory.com/entry/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88)
 
