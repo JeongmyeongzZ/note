@@ -144,7 +144,87 @@ _@Component를 파다보면 @Bean이 나오거나, @Bean으로도 Class를 등�
 > @Component는 Class Level에서, @Bean은 Method Level에서 적용된다. @Component는 Class와 Bean이 One to One 관계를 갖는 반면 메소드는 그렇지 않다.
 > @Bean의 경우 개발자가 컨트롤이 불가능한 외부 라이브러리들을 Bean으로 등록하고 싶은 경우에 사용된다. (예를 들면 ObjectMapper의 경우 ObjectMapper Class에 @Component를 선언할수는 없으니 ObjectMapper의 인스턴스를 생성하는 메소드를 만들고 해당 메소드에 @Bean을 선언하여 Bean으로 등록한다.)
 
+### Event
 
+ApplicationContext의 이벤트 핸들링은 ApplicationEvent 클래스와 ApplicationListener 인터페이스를 통해 제공됩니다. 
+
+ApplicationListener 인터페이스를 구현하는 bean이 컨텍스트에 배포되면 ApplicationEvent가 ApplicationContext에 발행될 때마다 해당 bean에 알림이 보내집니다. 
+
+기본적으로 이 방식은 일반적인 옵저버 패턴(Observer Pattern) 입니다.
+
+Spring 4.2 버전부터 애노테이션 기반의 모델과 임의의 이벤트(ApplicationEvent에서 확장할 필요가 없는 객체)를 발행하는 기능을 제공합니다. 이런 종류의 객체가 발행되면, 우리는(Spring은) 이를 이벤트로 래핑합니다.
+
+ContextRefreshedEvent, ContextStartedEvent, ContextStoppedEvent, ContextClosedEvent, RequestHandledEvent, ServletRequestHandledEvent 가 있다.
+
+Spring의 ApplicationEvent 클래스를 extends 해 CustomEvent 를 생성할 수도 있다. 커스텀 ApplicationEvent를 발행하려면 ApplicationEventPublisher의 publishEvent() 메소드를 호출하면 된다.
+
+
+#### Standard and Custom Events
+
+이 작업은 일반적으로 ApplicationEventPublisherAware의 구현 클래스를 생성하고 bean으로 등록하는 식으로 이루어집니다. 
+
+```java
+// 이와 같이
+
+public class EmailService implements ApplicationEventPublisherAware {
+
+    private List<String> blockedList;
+    private ApplicationEventPublisher publisher;
+```
+
+configuration time에, EmailService가 ApplicationEventPublisherAware를 구현하고 자동으로 setApplicationEventPublisher()를 호출하는 것을 Spring 컨테이너는 자동으로 감지합니다.
+여러분은 ApplicationEventPublisher 인터페이스를 통해 애플리케이션 컨텍스트와 상호작용하고 있는 것입니다.
+
+커스텀 ApplicationEvent를 수신하려면, ApplicationListener를 구현하는 클래스를 생성하고 Spring bean으로 등록하면 됩니다.
+
+```java
+// 이와같이
+
+public class BlockedListNotifier implements ApplicationListener<BlockedListEvent> {
+
+    public void onApplicationEvent(BlockedListEvent event) {
+        // notify appropriate parties via notificationAddress...
+    }
+}
+
+```
+
+이벤트 리스너의 수는 원하는 만큼 얼마든지 등록할 수 있습니다. 다만, 이벤트 리스너는 기본적으로 이벤트를 동기식(synchronously)으로 수신합니다. 이는 모든 리스너가 이벤트 처리를 완료할 때까지는 publishEvent() 메소드가 block된다는 의미입니다.
+
+이런 동기식의 단일 스레드 접근 방식의 한 가지 장점은, 리스너가 이벤트를 수신할 때 트랜잭션 컨텍스트를 사용할 수 있는 경우라면 이벤트 발행자의 트랜잭션 컨텍스트 내에서 작동하게 된다는 것입니다.
+
+#### Annotation-based Event Listeners
+
+관리되고 있는 bean이라면 어느 메소드이건 @EventListener 애노테이션을 붙여서 이벤트 리스너를 등록할 수 있습니다. 이번에는 특정한 리스너 인터페이스를 구현하지 않고 유연한 이름을 사용합니다.
+
+만약 여러 이벤트를 수신하게 하고 싶거나 파라미터 없이 정의하려 한다면, 이벤트 타입을 애노테이션에 지정하는 방법도 있습니다. 다음 예는 그 방법을 보여줍니다.
+
+```
+@EventListener({ContextStartedEvent.class, ContextRefreshedEvent.class})
+public void handleContextStart() {
+    // ...
+}
+```
+
+#### Asynchronous Listeners
+
+만약 리스너가 이벤트를 비동기로 처리하게 하고 싶다면, @Async 어노테이션을 사용할 수 있습니다. 
+
+_비동기 이벤트를 사용할 때에는 다음을 주의해야 합니다._
+
+* 만약 비동기 이벤트 리스너가 Exception을 던지게 되면, 호출자에게 예외가 전달되지 않습니다. (자세한 내용은 AsyncUncaughtExceptionHandler를 참고)
+* 비동기 이벤트 리스너 메소드는 값을 리턴하는 방식을 통해 서브 이벤트를 발행할 수 없습니다. (만약 처리 결과로 다른 이벤트를 발행하고 싶다면, ApplicationEventPublisher를 주입해서 이벤트를 수동으로 발행하세요.)
+
+만약 어떤 리스너를 다른 리스너보다 먼저 호출할 필요가 있다면, 다음 예제와 같이 @Order 애노테이션을 메소드에 붙여주면 됩니다.
+
+제네릭을 사용해 추가적인 이벤트 구조를 정의하는 것도 가능합니다. EntityCreatedEvent<T>를 사용한다고 생각해 봅시다. 이때 T는 생성된 실제 엔티티의 타입입니다. 예를 들어, 다음과 같이 리스너를 정의하면 Person에 대한 EntityCreatedEvent 이벤트만 받을 수도 있습니다.
+
+```
+@EventListener
+public void onPersonCreated(EntityCreatedEvent<Person> event) {
+    // ...
+}
+```
 
 
 
