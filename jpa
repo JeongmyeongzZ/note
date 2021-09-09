@@ -1,5 +1,14 @@
 ## JPA
 
+### JPA는 기술 명세이다
+
+JPA는 Java Persistence API의 약자로, 자바 어플리케이션에서 관계형 데이터베이스를 사용하는 방식을 정의한 인터페이스이다. 
+
+JPA는 단순히 명세이기 때문에 구현이 없다. 라이브러리가 아닌 정말 인터페이스이다.
+
+JPA의 핵심이 되는 EntityManager는 javax.persistence.EntityManager 라는 파일에 interface로 정의되어 있다.
+
+
 ## Spring Data JPA
 
 ## Hibernate
@@ -7,3 +16,8 @@
 ## Entity Manager
 
 ## CrudRepository
+
+
+_참고_
+
+- https://suhwan.dev/2019/02/24/jpa-vs-hibernate-vs-spring-data-jpa/
