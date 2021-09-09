@@ -34,6 +34,10 @@ Spring Data JPA가 JPA를 추상화했다는 말은, Spring Data JPA의 Reposito
 Repository 인터페이스의 기본 구현체인 SimpleJpaRepository의 코드를 보면 내부적으로 EntityManager을 사용하고 있는 것을 볼 수 있다.
 
 
+![jpa](./resources/jpa/jpa.png)
+_ JPA, Spring Data JPA, Hibernate _
+
+
 ## Entity Manager
 
 ## CrudRepository
