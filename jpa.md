@@ -9,6 +9,7 @@ JPA는 단순히 명세이기 때문에 구현이 없다. 라이브러리가 아
 JPA의 핵심이 되는 EntityManager는 javax.persistence.EntityManager 라는 파일에 interface로 정의되어 있다.
 
 
+
 ## Hibernate
 
 ### Hibernate는 JPA의 구현체이다
@@ -35,12 +36,52 @@ Repository 인터페이스의 기본 구현체인 SimpleJpaRepository의 코드�
 
 
 ![jpa](./resources/jpa/jpa.png)
-_ JPA, Spring Data JPA, Hibernate _
+_JPA, Spring Data JPA, Hibernate_
+
 
 
 ## Entity Manager
 
+엔티티 매니저는 특정 작업을 위해 데이터베이스에 액세스 하는 역할을 가진다. 엔티티 매니저 내부에 영속성 컨텍스트(Persistence Context)라는 걸 두어서 엔티티들을 관리한다.
+
+엔티티 매니저는 여러 스레드가 동시에 접근하면 동시성 문제가 발생하므로 스레드 간에 절대 공유하면 안 된다.
+
+Spring 컨테이너가 초기화되면서 @PersistenceContext 애노테이션으로 주입받은 EntityManager를 Proxy로 감싼다. 이후 EntityManager 호출 시 마다 Proxy를 통해 EntityManager를 생성 하여 Thread-Safety를 보장 한다.
+
+
+
 ## CrudRepository
+
+CrudRepository는 관리되는 엔티티 클래스에 대해 정교한 CRUD 기능을 제공한다. 
+
+JPA 처리를 담당하는 Repository는 기본적으로 4가지가 있다. 
+
+- Repository<T, ID>
+- CrudRepository<T, ID>
+- PagingAndSortingRepository<T, ID>
+- JpaRepository<T, ID>
+
+
+[ 스프링 데이터 모듈 ]
+
+      Repository
+
+          |
+
+    CrudRepository
+
+          |
+
+PagingAndSortingRepository
+
+          |
+
+[ 스프링 데이터 JPA 모듈 ]
+
+          |    
+
+    JpaRepository (+ 추가로 JPA에 특화된 기능 제공)
+
 
 
 _참고_
