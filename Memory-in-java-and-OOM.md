@@ -31,6 +31,37 @@ Stack 메모리는 Thread 하나당 하나씩 할당된다. 즉, 스레드 하�
 Heap 영역에 있는 오브젝트들을 가리키는 레퍼런스 변수가 stack 에 올라가게 된다.
 
 
+---
+
+## JVM 에서의 메모리
+
+- 실행될 클래스 파일을 메모리에 로드 후 초기화 작업 수행
+- 메소드와 클래스변수들을 해당 메모리 영역애 배치
+- 클래스로드가 끝난 후 JVM은 main 메소드를 찾아 지역변수, 객체변수, 참조변수를 스택에 쌓음
+- 다음 라인을 진행하면서 상황에 맞는 작업 수행(함수 호출, 객체 할당 등)
+
+JVM의 구성을 살펴보면 크게 4가지(Class Loader, Execution Engine, Garbage Collector, Runtime Data Area)로 나뉜다.
+
+이중 Runtime Data Area 엔 Method area, Heap area, Stack area, PC Register, Native method stack 이 있다.
+
+### Method area (메소드 영역)
+
+클래스 멤버 변수의 이름, 데이터 타입, 접근 제어자 정보같은 필드 정보와 메소드의 이름, 리턴 타입, 파라미터, 접근 제어자 정보같은 메소드 정보, Type정보(Interface인지 class인지), Constant Pool(상수 풀) 문자 상수, 타입, 필드, 객체 참조가 저장됨), static 변수, final class 변수등이 생성되는 영역
+
+### PC Register (PC 레지스터)
+
+Thread(쓰레드)가 생성될 때마다 생성되는 영역으로 Program Counter 즉, 현재 쓰레드가 실행되는 부분의 주소와 명령을 저장하고 있는 영역이다. (*CPU의 레지스터와 다름)
+
+이것을 이용해서 쓰레드를 돌아가면서 수행할 수 있게 한다.
+
+### Native method stack
+
+자바 외 언어로 작성된 네이티브 코드를 위한 메모리 영역이다.
+
+보통 C/C++등의 코드를 수행하기 위한 스택이다. (JNI)
+
+
+---
 
 
 # OOM (Out Of Memory)?
