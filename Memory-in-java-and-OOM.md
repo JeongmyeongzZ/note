@@ -66,12 +66,16 @@ Thread(쓰레드)가 생성될 때마다 생성되는 영역으로 Program Count
 
 # OOM (Out Of Memory)?
 
-
 OOME(Out Of Memory Error)는 JVM의 메모리가 부족하여 발생한 에러이다.
 
-자바 애플리케이션 환경인 WAS 기반에서 수행된 서비스들에 대해서는 흔히 JVM Heep 메모리 관련 오류들을 흔하게 접할수 있다.
+자바 애플리케이션 환경인 WAS 기반에서 수행된 서비스들에 대해서는 흔히 JVM Heep 메모리 관련 오류들을 흔하게 접할수 있다. 많은 경우 싱글톤이나 static을 잘못 사용했을 확률이 높다.
 
-- Java.lang.OutOfMemoryError: Java heap space
+jvm 시작시에 -XX:+HeapDumpOnOutOfMemoryError 를 추가하면 JVM 정지시에 힙덤프를 받아놓을수 있다.
+jvm 시작시에 -verbose:gc옵션을 추가하면 가비지 콜렉션 로그를 자세히 볼수 있다.
+jvm 시작시에  –verbose:class옵션을 추가하면 클래스 로드, 언로드 상황을 볼수 있다.
+
+
+## Java.lang.OutOfMemoryError: Java heap space
 
 Java의 Heap Memory 공간이 부족하여 발생한다. 공간 부족의 원인으로는 Heap Memory의 크기가 작아서 발생하는 경우와 애플리케이션 로직의 문제로 발생하는 경우가 있다.
 
@@ -80,7 +84,7 @@ Java의 Heap Memory 공간이 부족하여 발생한다. 공간 부족의 원인
 OOME가 발생한 시점에 생성된 Heap Dump 분석을 기반으로 쓸데없이 많은 Memory를 사용하거나 Memory Leak을 유발하는 로직을 찾아내어 수정해야 한다.
 
 
-- Java.lang.OutOfMemoryError : PermGen space
+## Java.lang.OutOfMemoryError : PermGen space
 
 Java Heep Memory 영역 중 Permanent 영역은 Class Method와 관련된 각종 Meta Data 등을 저장하는 용도로 사용된다. 
 
@@ -91,6 +95,34 @@ Permanent 영역은 Heap 영역과는 달리 일반 비즈니스 프로그램으
 PermGen 영역은 Class를 로딩하고 해제하지 않으면 누수가 일어나며 PermGen 영역에 OutOfMemory가 발생할 수 있다. 
 
 Class Loading 현황을 분석하려면 컨텍스트 메뉴에서 Java Basics > Class Loader Explorer를 선택해서 확인 할 수 있다.
+
+
+## java.lang.OutOfMemoryError: Requested array size exceeds VM limit
+
+사용할 배열의 사이즈가 VM에서 정의될 사이즈를 초과할 때 발생한다.
+
+
+## java.lang.OutOfMemoryError: request bytes for . Out of swap space?
+
+Java는 런타임시 물리적 메모리를 초과한 경우 가상메모리를 확장해 사용하게 되는데 가용한 가상메모리가 없을 경우 발생한다.
+
+
+## java.lang.OutOfMemoryError: (Native method)
+
+VM에 설정된 것 보다 큰 native메모리가 호출 될 때 발생한다.
+
+
+- 하이버네이트는 select t from Thing t where t.id in (?) 같은 in-clause가 사용된 HQL 쿼리들을 캐싱한다.
+
+## Solution 
+
+- JVM Option (Tuning) Parallel GC방식 / G1GC 방식 등 
+- Thread Dump, Heap Dump 분석
+- 메모리 사용량 및 GC Monitoring
+  - VisualVM
+- 부하테스트
+  - Jmeter
+- Heap Memory 조정 
 
 
 
