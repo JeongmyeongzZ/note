@@ -126,6 +126,8 @@ VM에 설정된 것 보다 큰 native메모리가 호출 될 때 발생한다.
 
 
 
+
 _출처_
 - https://yaboong.github.io/java/2018/05/26/java-memory-management/
 - https://doohong.github.io/2019/05/16/Java-outofmemory/
+- https://johngrib.github.io/wiki/jvm-memory/
