@@ -228,4 +228,9 @@ DAO 는 데이터베이스 테이블에ㄸ라 표현된다. 보통 테이블 기
 
 ---
 
+## 14. 애플리케이션
+
+시스템이나 비즈니스 서비스라는 용어와 애플리케이션이란 용어는 어느정도 대체 가능한 의미로 사용된다.
+
+DTO, DPO (payload object), View model, Presentation Interface 등의 고려
 
