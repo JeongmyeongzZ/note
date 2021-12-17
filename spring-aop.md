@@ -12,8 +12,10 @@ AOP는 Aspect Oriented Programming의 약자로 관점 지향 프로그래밍이
 
 흩어진 관심사를 Aspect로 모듈화하고 핵심적인 비즈니스 로직에서 분리하여 재사용하겠다는 것이 AOP의 취지다.
 
+> Aspect는 부가될 기능을 정의한 Advice와, 해당 Advice를 어디에 적용할 지를 결정하는 Pointcut 정보를 가지고 있습니다.
 
-# 스프링 AOP
+
+# Spring AOP
 
 스프링 AOP 를 이해하려면 Proxy 에 대한 이해가 필요하다. 아래의 코드를 살펴보자.
 
@@ -50,13 +52,61 @@ public class UserServiceProxy implements UserService {
 
 `DefaultAdvisorAutoProxyCreator` 라는 클래스가 Bean 을 자동으로 프록시로 만들어준다. `BeanPostProcessor` 라는 Bean 후처리기 인터페이스를 확장한 클래스이며, 동작 플로우는 다음과 같다.
 
+1. Spring Container는 해당 후처리기가 Bean으로 등록되어 있으면 Bean들을 생성할 때 후처리기에 보내 후처리 작업을 요청합니다.
+2. Bean이 프록시 적용 대상이라면, 후처리기는 타깃 Bean을 프록시로 감싼 오브젝트로 바꿔치기 하여 Spring Container에게 반환합니다.
 
 
+---
 
-프록시 패턴 기반의 AOP 구현체, 프록시 객체를 쓰는 이유는 접근 제어 및 부가기능을 추가하기 위해서임
-스프링 빈에만 AOP를 적용 가능
-모든 AOP 기능을 제공하는 것이 아닌 스프링 IoC와 연동하여 엔터프라이즈 애플리케이션에서 가장 흔한 문제(중복코드, 프록시 클래스 작성의 번거로움, 객체들 간 관계 복잡도 증가 ...)에 대한 해결책을 지원하는 것이 목적
+Spring AOP 를 적용하는 방법엔 아래와 같은 방법 등이 있다.
+- Spring AOP 이용
+- 위 예제처럼 생성
+- AspectJ 등을 사용해 구현
 
+
+```
+@Aspect
+@Component
+@RequiredArgsConstructor
+public class TxAspect {
+
+    private final PlatformTransactionManager transactionManager;
+
+    @Pointcut("execution(* com.demo.user.UserService.send*(..))")
+    public void getUsers() {
+    }
+
+    @Pointcut("execution(* com.demo.user.BankService.update*(..))")
+    public void getBanks() {
+    }
+
+    @Around("getUsers() || getBakns()")
+    public Object applyTx(ProceedingJoinPoint joinpoint) throws Throwable {
+        TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        try {
+            Object object = jointPoint.proceed();
+            transactionManager.commit(transaction);
+            return object;
+        } catch (RuntimeException runtimeException) {
+            transactionManager.rollback(transaction);
+            throw runtimeException;
+        }
+    }
+}
+```
+
+AspectJ 에서 트랜잭션 관련 관심사를 분리해 Aspect 로 구현한 모습은 위와 같다. (spring 엔 이미 @transactional 이 있고, 이는 사실 위와 같은 관심사 분리를 통해 도출 된 결과물이라고 봐도 된다)
+
+관련해서 낯선 속성 값들이 보이는데 어떤 의미를 가지고 있는지 참고하면 좋을 용어들.
+
+
+- Target (핵심 기능을 담고 있는 모듈로 타겟은 부가기능을 부여할 대상)
+- Advice (타겟에 제공할 부가기능을 담고 있는 모듈)
+- Join Point (어드바이스가 적용될 수 있는 위치, 타겟 객체가 구현한 인터페이스의 모든 메서드는 조인 포인트가 된다.)
+- Pointcut (어드바이스를 적용할 타겟의 메서드를 선별하는 정규표현식이다. 포인트컷 표현식은 execution으로 시작하고 메서드의 Signature를 비교하는 방법을 주로 이용한다.)
+- Aspect (애스펙트는 AOP의 기본 모듈, 싱글톤 형태의 객체로 존재한다.)
+- Advisor (어드바이저 = 어드바이스 + 포인트컷, Spring AOP에서만 사용되는 특별한 용어)
+- Weaving (위빙은 포인트컷에 의해서 결정된 타겟의 조인 포인트에 어드바이스를 삽입하는 과정을 뜻한다. AOP가 타겟의 코드에 영향을 주지 않으면서 필요한 어드바이스를 추가할 수 있도록해주는 핵심적인 처리과정이다.)
 
 
 
