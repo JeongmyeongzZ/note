@@ -112,3 +112,4 @@ AspectJ 에서 트랜잭션 관련 관심사를 분리해 Aspect 로 구현한 �
 
 _참고_
 - _https://tecoble.techcourse.co.kr/post/2021-06-25-aop-transaction/_
+- _https://shlee0882.tistory.com/206_
