@@ -7,7 +7,7 @@ ELK Stack에서 중요한 보조 수단. 애플리케이션에서 File을 통한
 
 ## 구성요소
 
-![filebeat](./resources/filebeat/filebeat.png)
+![filebeat](../resources/filebeat/filebeat.png)
 _filebeat_
 
 파일비트는 Prospectors, Harvesters, Spooler라는 주요 구성 요소를 가지고 있다. 다수의 Prospector, Harvester로 이루어진다.
@@ -39,7 +39,7 @@ console, redis, elasticsearch 등 다양한 Output 선택지가 있지만, kafka
 
 ### Why kafka
 
-![w-kafka](./resources/filebeat/w-kafka.png)
+![w-kafka](../resources/filebeat/w-kafka.png)
 _filebeat with kafka_
 
 어떠한 이유로 ELK 스택이 다운되었을 때, 저장하지 못한 로그를 보관하기 위해 Apache Kafka 를 이용한다.

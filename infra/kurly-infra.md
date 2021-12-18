@@ -203,7 +203,7 @@ Circuit breaker 패턴은 Release It에서 처음 소개된 패턴이고, 전기
  
 기능이 복구되면 다시 서비스를 정상화시켜야 하는데, 무턱대고 정상 상태(Close state)로 돌리면 request가 갑자기 몰리면서 문제가 다시 있다. 그래서 일부 request만 실행해보면서 기능이 다시 정상적으로 동작하는지 확인하는 과정인 반 열림 상태(Half open state)가 있다. 
  
- ![curcuit-breaker](./resources/jpa/curcuit-breaker.png)
+ ![curcuit-breaker](../resources/jpa/curcuit-breaker.png)
 _열림, 닫힘, 반열림 상태_
  
  <br>
