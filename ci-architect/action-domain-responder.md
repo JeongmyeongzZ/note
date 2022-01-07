@@ -17,7 +17,7 @@ Domain 과 Responder 의 연결고리입니다. HTTP 요청에서 수집 된 데
 https://github.com/pmjones/adr-example/blob/master/src/Web/Blog/Add/BlogAddAction.php
 
 
-## Dmain
+## Domain
 
 필요에 따라 상태와 지속성을 수정하는 응용 프로그램의 핵심을 형성하는 도메인 논리의 진입점입니다. 이것은 트랜잭션 스크립트, 서비스 계층, 애플리케이션 서비스 또는 이와 유사한 것일 수 있습니다.
 
