@@ -113,3 +113,77 @@ set(value) {
 
 ---
 
+## 4. 클래스, 객체, 인터페이스
+
+```kotlin
+interface SomeInterface {
+    fun test() = println("test..")
+}
+
+class TestClass: SomeInterface {
+  override fun test() {
+    super.test()
+
+    println("something more..")
+  }
+}
+```
+
+인터페이스안에 디폴트 구현을 추가할 수 있다. 메소드 시그니처 뒤에 단순히 입력만 하면 된다. 자바에선 SomeInterface.super.test() 와 같이 super 앞에 기반타입을 적지만, 코틀린은 super<SomeInterface>.test 와 같이 이름을 지정한다.
+
+코틀린에선 기본적으로 Final 이다. 취약한 기반클래스라는 문제가 발생하지 않기 위해, 이펙티브 자바에서는 상속을 위한 설계와 문서를 갖추거나, 그럴 수 없으면 상속을 금지하라. (모두 final 로 만들어라.) 라는 말이 있다.
+
+코틀린도 이 철학을 동일하게 가져간다. 상속을 허용하려면 앞에 open 변경자를 붙여야 한다. 오버라이드를 허용하고 싶은 메서드나 프로퍼티 앞에도 동일하다.
+
+추상(abstract) 클래스 및 메서드는 반드시 오버라이드 해야한다는 점에서 동일하다.
+
+이번엔 가시성에 대해 알아보자. 코틀린 가시성 변경자는 자바와 비슷하다. 자바와 기본 가시성은 다르다. 아무 변경자도 없는 경우 모두 public 하다. *자바의 기본 가시성인 package-private 은 코틀린에 없다.*
+_이 대안으론 internal 이라는 새로운 가시성 변경자가 도입됐다_
+
+자바에서는 같은 패키지 안에서 protected 멤버에 접근 할 수 있다. (이건 몰랐네...) 코틀린에서는 그렇지 않다는 점에 유의하자. 상속한 클래스 안에서만 보인다. 클래스를 확장한 함수는 그 클래스의 private, protected 멤버에 접근 할 수 없다는 점은 다시 한 번 짚고 넘어가자.
+
+sealed class 는 보통 아래와 같이 생성됩니다. 그리고 이와 같이 사용할 수 있습니다. 
+
+`val color : Color = Red`
+
+> object 클래스로 정의하면 singleton 패턴이 적용되어 single instance로 생성됩니다.
+
+```kotlin
+sealed class Color {
+    data class Red(val r: Int, val g: Int, val b: Int) : Color()
+    data class Orange(val r: Int, val g: Int, val b: Int) : Color()
+    data class Yellow(val r: Int, val g: Int, val b: Int) : Color()
+    data class Green(val r: Int, val g: Int, val b: Int) : Color()
+    data class Blue(val r: Int, val g: Int, val b: Int) : Color()
+    data class Indigo(val r: Int, val g: Int, val b: Int) : Color()
+    data class Violet(val r: Int, val g: Int, val b: Int) : Color()
+}
+
+// 중첩 클래스로 정의하는 방법
+
+sealed class Color {
+  object Red: Color()
+  object Green: Color()
+  object Blue: Color()
+}
+```
+
+```kotlin
+fun eval(e: TestSealed) {
+    when (e) {
+        is TestSealed.Red -> println("test !")
+        is TestSealed.Blue -> println("test !")
+        is TestSealed.Green -> println("test !")
+    }
+}
+```
+
+else 가 없어도 sealed class 는 오류가 발생하지 않는다.
+Sealed class는 Super class를 상속받는 Child 클래스의 종류 제한하는 특성을 갖고 있기 때문이다.
+
+어떤 클래스를 상속받는 하위 클래스는 여러 파일에 존재할 수 있기 때문에 컴파일러는 얼마나 많은 하위 클래스들이 있는지 알지 못합니다. 하지만 Sealed class는 동일 파일에 정의된 하위 클래스 외에 다른 하위 클래스는 존재하지 않는다는 것을 컴파일러에게 알려주는 것과 같습니다.
+
+이렇게 하위 클래스가 될 수 있는 클래스를 제한하여 얻을 수 있는 장점 중 하나는 when을 사용할 때 else를 사용하지 않는 것입니다.
+
+이것은 코틀린에서 제공하는 Enum으로도 얻을 수 있는 이점입니다. 하지만 Enum은 Red라는 하위 객체를 Singleton처럼 1개만 생성할 수 있고 복수의 객체는 생성할 수는 없습니다. 반면에 Sealed class는 1개 이상의 객체를 생성할 수 있습니다.
+
