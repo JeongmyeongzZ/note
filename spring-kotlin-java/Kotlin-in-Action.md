@@ -43,3 +43,73 @@ enum 은 자바와 달리 enum class Color 와 같이 class 키워드를 필수�
 
 ## 3. 함수 정의와 호출
 
+```kotlin
+val a = listOf(1, 2, 3);
+
+println(a);
+```
+
+와 같은 코드가 있다. 자바 컬렉션에는 디폴트 toString 구현이 들어있다. 하지만 그 디폴트 toString 출력 형식은 고정돼 있고 우리에게 필요한 형식이 아닐 수 있다.
+`[1, 2, 3]` 과 같이 출력되는게 아니라, `(1; 2; 3)` 처럼 노출시킬 순 없을까?
+
+```kotlin
+fun <T> Collection<T>.joinToString(separator: String = ",",
+                                   prefix: String = "(",
+                                   postfix: String = ")"
+): String {
+
+//사용
+val list = listOf("1","2","3")
+list.joinToString()
+```
+
+named parameter 와, 제네릭을 사용해 위와 같은 유연한 함수를 직접 만들 수 있다.
+
+확장 함수는 static 메소드이기 때문에 오버라이드를 할 수 없습니다.
+그리고 확장 함수는 클래스 밖에 선언되기 때문에 오버라이드를 할 수 없습니다.
+
+```kotlin
+
+StringJoin.kt //StringJoin.kt 파일에 정의된 확장함수
+
+package com.zerogdev.mykotlin.function.other
+fun String.lastChar():Char = this.get(this.length - 1)
+
+
+ExtendFunction.kt //ExtendFunction.kt 파일에 정의된 확장함수
+
+package com.zerogdev.mykotlin.function.extend
+fun String.lastChar():Char = this.get(this.length - 1)
+
+// =>
+
+import com.zerogdev.mykotlin.function.other.lastChar
+import com.zerogdev.mykotlin.function.extend.lastChar as last //last 로 이름을 변경
+
+//확장 함수 사용
+"zerog".lastChar() //other 패키지에 있는 lastChar() 사용
+"zerog".last()       //extend 패키지에 있는 lastChar() 사용
+
+```
+
+또한 프로퍼티도 확장할 수 있습니다.
+다만, 확장 프로퍼티는 상태를 저장할 수 없기때문에 초기화 할 수 없고 get() 을 구현 해야됩니다.
+
+그리고 List 처럼 상태를 저장할 수 있는 클래스인경우 get()과 set()을 추가할 수 있습니다.
+```kotlin
+
+//get() 구현
+val String.lastChar: Char
+get() = get(length - 1)
+
+//리스트인경우 get(), set() 구현
+var List.lastChar: String
+get() { return last()}
+set(value) {
+    var lastChar: String = last()
+    lastChar = value
+}
+```
+
+---
+
