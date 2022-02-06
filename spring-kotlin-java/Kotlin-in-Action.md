@@ -187,3 +187,35 @@ Sealed class는 Super class를 상속받는 Child 클래스의 종류 제한하�
 
 이것은 코틀린에서 제공하는 Enum으로도 얻을 수 있는 이점입니다. 하지만 Enum은 Red라는 하위 객체를 Singleton처럼 1개만 생성할 수 있고 복수의 객체는 생성할 수는 없습니다. 반면에 Sealed class는 1개 이상의 객체를 생성할 수 있습니다.
 
+
+
+코틀린에는 여러 생성자가 존재한다.
+
+```kotlin
+// 선언과 초기화를 한번에
+class User(val nickname: String)
+```
+
+이렇게 클래스 이름 뒤에 오는 괄호로 둘러싸인 코드를 주 생성자(primary constructor)라고 부른다. 주 생성자는 생성자 파라미터를 지정하고 그 생성자 파라미터에 의해 초기화되는 프로퍼티를 정의하는 두 가지 목적에 쓰인다.
+실제로는 아래와 같은 일이 벌어진다.
+
+```kotlin
+// 선언과 초기화를 각자 constructor, init 에서 한다.
+class User constructor(_nickname:String){ // 파라미터가 하나만 있는 주 생성자
+  val nickname: String
+  init {
+    nickname = _nickname
+  }
+}
+```
+
+그리고 named parameter 를 지원하며, 기반 클래스 (final 이기에 상속을 허용하는 open 키워드가 붙어있다.) 는 아래와 같이 생성한다.
+
+```kotlin
+open class User(val nickname: String) { ... } 
+class TwitterUser(nickname: String): User(nickname) { ... }
+
+// 아무 인자를 필요로 하지 않더라도 생성자를 호출해야한다.
+open class User() { ... }
+class TwitterUser(nickname: String): User() { ... }
+```
