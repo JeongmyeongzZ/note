@@ -219,3 +219,69 @@ class TwitterUser(nickname: String): User(nickname) { ... }
 open class User() { ... }
 class TwitterUser(nickname: String): User() { ... }
 ```
+
+데이터 클래스는 toString, equals, hashcode 메소드를 모두 포함하고 있다. 
+데이터 클래스는 프로퍼티가 꼭 val 일 필요는 없다. 그러나 immutable 하게 만들라고 권장한다. 해시맵등의 컨테이너에 데이터 클래스 객체르르 담는 경우엔 불변성이 필수적이다. (hashcode 는 해시맵같은 해시기반 컨테이너의 키로 사용된다)
+
+copy 메소드는 객체를 복사하며 일부 프로퍼티를 바꿀 수 있게 한다. 객체를 메모리상에서 직접 바꾸는 것 보다 복사본을 만드는게 훨씬 낫다라는 것이다.
+
+---
+
+코틀린엔 static 이 존재하지 않는다. 최상위 함수로 대부분 처리할 수 있기 때문이다.
+그러나 최상위 함수는 당연히 어떤 객채의 Private 한 값엔 접근 할 수 없다.
+이럴 때 object 를 고려한다. <컴파일시 java 의 static 으로 변환 됨>
+
+코틀린은 object 키워드를 이용해서 별다른 코드없이 싱글턴 구현을 지원합니다.
+
+```kotlin
+
+object Payroll { //object 클래스 생성으로 싱글턴을 구현
+    val allEmplyees = arrayListOf<Person>()
+
+    fun calculateSalary() {
+        //...
+    }
+}
+
+
+//사용
+Payroll.calculateSalary() //싱글턴처럼 . 으로 접근
+Payroll.allEmplyees.add(Person("zerog", Company("zerog", Address(""))))
+
+```
+
+동반객체 (companion)는 팩터리 메서드 패턴을 구현할 때 용이하다.
+
+```kotlin
+class User private constructor(val name: String) { //private 생성자
+    companion object {
+        //이메일로 닉네임을 뽑아 User 를 생성
+        fun newSubscribingUser(email:String) = User(email.substringBefore("@"))
+        //id 로 User 를 생성
+        fun newFacebookUser(id:Int) = User("${id}")
+    }
+}
+
+//사용
+UserObject.newSubscribingUser("zerogdevinfo@gmail.com")
+UserObject.newFacebookUser(1)
+```
+
+상속/ 구현이 필요한 상황에서도 유용하게 쓸 수 있다.
+```kotlin
+interface JSONFactory {
+    fun fromJSON(jsonText: String) : T
+}
+
+
+class Person(val name: String) {
+
+    //동반 객체가 인터페이스를 구현한다
+    companion object : JSONFactory<JSONPerson>{ 
+        override fun fromJSON(jsonText: String): Person {
+            return Person(jsonText)
+        }
+    }
+
+}
+```
