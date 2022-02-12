@@ -26,3 +26,10 @@ No. The domain layer should preferably remain agnostic to repositories. Applicat
 
 
 _2022 02 08 컬리 회의 속 내 생각들 .._
+
+
+- _http://jaynewho.com/post/45_
+
+엔티티가 비대해질 수 있다. 이는 바운디드 컨텍스트 `같은 도메인이어도, 사용되는 맥락이 다르면 엔티티를 별도로 매핑하라` 의 원칙을 지키면 생각보다 쉽다.
+각 엔티티를 따로 만들면 된다.
+코드 중복이 심하지 않냐? 효용성이 더 크다. 이는 응집성 있는 도메인 모델을 만들 수 있다
