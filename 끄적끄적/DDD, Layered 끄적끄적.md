@@ -33,3 +33,39 @@ _2022 02 08 컬리 회의 속 내 생각들 .._
 엔티티가 비대해질 수 있다. 이는 바운디드 컨텍스트 `같은 도메인이어도, 사용되는 맥락이 다르면 엔티티를 별도로 매핑하라` 의 원칙을 지키면 생각보다 쉽다.
 각 엔티티를 따로 만들면 된다.
 코드 중복이 심하지 않냐? 효용성이 더 크다. 이는 응집성 있는 도메인 모델을 만들 수 있다
+
+---
+
+- https://github.com/rogelio-o/spring-ddd/blob/master/spring-ddd-infrastructure/src/main/java/com/rogelioorts/training/spring/ddd/repositories/MoviesFeignRepository.java
+- https://softwareengineering.stackexchange.com/questions/426874/what-layer-do-third-party-api-request-response-models-go-in-and-what-do-you-call
+
+외부 API 를 호출하는 영역은 Infrastructure 계층임이 분명해보인다.
+그런데, 요청에 필요한 객체와 응답을 매핑하는 객체는 어느 레이어에 속하는가? Infra 객체에 model 들을 때려 박아야하는가, 아님 이것을 도메인 객체로 간주해야하는가, 아니면 단순 DTO 관점으로 애플리케이션 레벨에 있어야하는가 ?
+
+
+It somewhat depends on whether you are using inverted dependencies or not. If you aren't, then the models can live together with the service in the Infrastructure layer, since your Application will depend on Infrastructure and have access to all of its services and models at the same time.
+
+However, if you're using inverted dependencies, that means that the Application (or Domain) layer defines the service's interface, which needs access to the in/output models, which means that you can't just plop those models in Infrastructure. In this case, they belong to the service's contract, and should be kept closeby to where you store the service interface itself. I personally would put them in the same directory, since they tend to uniquely belong to each other.
+
+이는 말한다. 의존성 역전을 사용하고 있냐 아니냐에 따라 조금 다르다고.
+사용하고 있지 않은경우는 Infra 레이어에 그냥 두어도 된다고 말한다. 인프라계층에 종속되고 나선 서비스나 모델에 대해서 접근할 수 있기 때문에..
+
+One internal (i.e. assembly-private) model in Infrastructure for the service logic
+One public model in Infrastructure to be consumed by its dependents (i.e. Application)
+The service class in Infrastructure will map from one to the other as it needs it.
+인프라 계층의 하나의 private 모델 
+하나의 퍼블릭한 인프라 모델, 그리고 인프라 계층에서 그들을 매핑..
+
+=
+
+그러나 의존성 역전이 이루어져있는 경우는 두면 안된다고 한다.
+애플리케이션 계층의 서비스가 해당 모델에 직접 접근 할 수 없기 때문에.. 
+이 경우엔 service's contract 에 속해야된다고 한다. 그리고 서비스 인터페이스와 가깝게 있어야한다고 말한다. 둘은 되게 가깝고 붙어있기 때문에.. 
+
+One model with the service interface in Application (just like before)
+One internal (i.e. assembly-private) model in Infrastructure for the service logic
+The service class in Infrastructure will map from one to the other as it needs it.
+애플리케이션의 모델, 서비스 클래스와 함께 
+하나의 인프라 계층 private 모델, 그리고 인프라계층의 서비스가 그들을 매핑..
+
+
