@@ -69,3 +69,11 @@ The service class in Infrastructure will map from one to the other as it needs i
 하나의 인프라 계층 private 모델, 그리고 인프라계층의 서비스가 그들을 매핑..
 
 
+-https://stackoverflow.com/questions/909264/ddd-anti-corruption-layer-how-to
+- https://koreapy.tistory.com/1127
+- https://www.altexsoft.com/blog/engineering/web-application-architecture-how-the-web-works/
+
+써드파티 api 를 호출하는 client 를 레파지토리로 볼 수 있는가?
+그 api로 엔티티를 만드는 거면 레파지터리로 볼 수도 있다.
+외부 라이브러리를 추상화하는 데에 파사드 패턴도 쓸 수 있다. 포트 어댑터 개념이 이 고민하는 상황엔 더 맞는 듯 ..
+
