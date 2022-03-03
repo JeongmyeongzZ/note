@@ -44,3 +44,7 @@ ValidatorPipeline(SomeValidator())
     .addPipe(MoreValidator())
     .execute(productResult.data)
 ```
+
+_참고_
+- https://java-design-patterns.com/patterns/pipeline/
+- https://gist.github.com/mmonti/4c27273d202f12bcb2b61cd89b759c38
