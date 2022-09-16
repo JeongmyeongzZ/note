@@ -285,3 +285,113 @@ class Person(val name: String) {
 
 }
 ```
+
+## 5. 람다로 프로그래밍
+
+코틀린에서의 람다
+
+람다는 기본적으로 다른 함수에 넘길 수 있는 작은 코드 조각을 뜻한다. 람다를 자주 사용하는 경우로 컬렉션 처리를 예로 들 수 있다.
+(람다라는 개념이 처음엔 생소 했는데, 코드 타이핑에 자연스레 녹아 있었다. 람다식을 직접 만드는 일이 거의 없이, 글로만 설명을 읽으니 생소 했던 듯)
+
+람다식은 직접 구현 할 수도 있다.
+
+```kotlin
+val sum = { x: Int, y: Int -> x + y }
+```
+
+람다식은 중괄호로 둘러쌓여있다. -> 이전에는 인자절 (파라미터), 그 이후는 본문 (표현) 이다.
+
+람다식을 직접 만들어 사용할 때는 run 메서드를 사용하면 된다. 
+
+```kotlin
+sum(1, 2)
+
+run { x + y }
+```
+
+로컨 변수처럼 컴파일러는 람다 파라미터의 타입도 추론할 수 있으니, 타입도 명시할 필요가 없다.
+원소가 하나일 때는 디폴트인 it 를 사용하여 본문 이전의 인자절도 제거할 수 있다 !
+
+멤버 참조를 사용해 Person::age 와 같이도 사용할 수 있다.
+
+코틀린에는 컬렉션을 다루는 편리한 함수들이 많으니 참고하자.
+
+컬렉션 연산에는 지연(lazy) 연산이라는 게 있다.
+
+filter, map 과 같은 함수들은 결과 컬렉션을 즉시 (eagerly) 생성한다. 이는 함수를 연쇄하면 매 단계마다 계싼 중간 결과를 새로운 컬렉션에 임시로 담는다는 말이다.
+이는 원소가 많아질 수록 비효율 적이다. 이를 더 효율적으로 사용하려면 직접 컬렉션을 사용하는 대신 시퀀스를 사용하게 만들어야 한다.
+
+```kotlin
+people.asSequence()
+  .map(Person::name)
+  .filter { it.startsWith("A") }
+  .toList()
+```
+
+이 시퀀스라는 인터페이스는 중간 연산과 최종 연산으로 나뉜다.
+중간 연산은 map, filter 부분으로 다른 시퀀스를 반환한다. 최종 연산은 결과를 반환한다.
+
+시퀀스를 사용하면서 주의할 점은 즉시 생성하는 게 아니기 때문에 첫 번째 함수가 다 실행되고, 두번째 함수가 실행 된다는 보장이 없다.
+
+```kotlin
+// 컬렉션 함수
+
+val words = "The quick brown fox jumps over the lazy dog".split(" ")
+val lengthsList = words.filter { println("filter: $it"); it.length > 3 }
+    .map { println("length: ${it.length}"); it.length }
+    .take(4)
+
+println("Lengths of first 4 words longer than 3 chars:")
+println(lengthsList)
+
+// output:
+// filter: The
+// filter: quick
+// filter: brown
+// filter: fox
+// filter: jumps
+// filter: over
+// filter: the
+// filter: lazy
+// filter: dog
+// length: 5
+// length: 5
+// length: 5
+// length: 4
+// length: 4
+// Lengths of first 4 words longer than 3 chars:
+// [5, 5, 5, 4]
+
+// 시퀀스
+val words = "The quick brown fox jumps over the lazy dog".split(" ")
+//convert the List to a Sequence
+val wordsSequence = words.asSequence()
+
+val lengthsSequence = wordsSequence.filter { println("filter: $it"); it.length > 3 }
+  .map { println("length: ${it.length}"); it.length }
+  .take(4)
+
+println("Lengths of first 4 words longer than 3 chars")
+// terminal operation: obtaining the result as a List
+println(lengthsSequence.toList())
+
+// output:
+// Lengths of first 4 words longer than 3 chars
+// filter: The
+// filter: quick
+// length: 5
+// filter: brown
+// length: 5
+// filter: fox
+// filter: jumps
+// length: 5
+// filter: over
+// length: 4
+// [5, 5, 5, 4]
+```
+
+with => 수신객체를 인자로 받아서 생략 가능
+apply => 이와 동일하지만, 수신객체를 다시 반환하는 확장 함수
+
+
+
