@@ -2,6 +2,10 @@
 
 --- 
 
+# PART 1. 코틀린 소개
+
+---
+
 ## 코틀린이란 ?
 
 자바 플랫폼에서 돌아가는 새로운 프로그래밍 언어. 간결하고 실용적이며 자바코드와 상호 운용성을 중시한다. 
@@ -450,3 +454,26 @@ println(address.city)
 ---
 
 읽기 전용 인터페이스 Collection, 변경 가능한 컬렉션 인터페이스 MutableCollection. 이는 타입만 보고도, 변경할지 안할지 알 수 있다.
+
+---
+
+# PART 2. 코틀린답게 사용하기 
+
+---
+
+## 7. 연산자 오버로딩과 기타 관례
+
+```kotlin
+data class Price(val value: Int) {
+    operator fun plus(b: Price): Price {
+        return Price(value + b.value)
+    }
+}
+val a: Price = Price(10)
+val b: Price = Price(50)
+val result: Price = a + b // 결과 Price(60)
+```
+
+와 같이 엄청나게 많은 연산들을 오버로딩 지원함. C++, C#, python 등에는 해당 기능들이 있어서 익숙할 수 있다고..
+
+
