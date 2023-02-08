@@ -7,8 +7,8 @@ ELK Stack에서 중요한 보조 수단. 애플리케이션에서 File을 통한
 
 ## 구성요소
 
-![filebeat](../resources/filebeat/filebeat.png)
-_filebeat_
+`![filebeat](../resources/filebeat/filebeat.png)
+_filebeat_`
 
 파일비트는 Prospectors, Harvesters, Spooler라는 주요 구성 요소를 가지고 있다. 다수의 Prospector, Harvester로 이루어진다.
 
