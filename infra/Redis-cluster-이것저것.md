@@ -19,10 +19,10 @@ database sharding, kafka partition key 와 같은 느낌이 난다.
 ```java
 // before
 private static final String FORMAT = "some-prefix:%d";
-val key = String.format(FORMAT, division, someId);
+var key = String.format(FORMAT, division, someId);
         
 // after
 private static final String FORMAT = "{some-prefix:%d}:%d";
-val key = String.format(FORMAT, division, someId);
+var key = String.format(FORMAT, division, someId);
 ```
 
