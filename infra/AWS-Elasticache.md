@@ -1,7 +1,5 @@
 # AWS Seminar
 
-![network](../resources/aws/network.png)
-
 On prem 보다 managed 가 (ElastiCache)
 - 서비스의 메모리를 더 많이 활용 가능
 - Multi AZ 는 AZ 간 통신비용이 더 많이 과금 될 수 있음
